@@ -31,10 +31,14 @@ namespace LightVector
             Width = width;
         }
 
+        public Vectors()
+        {
+        }
+
         /// <summary>
         ///     Gets the lines.
         /// </summary>
-        internal List<LineObject> Lines { get; private set; }
+        public List<LineObject> Lines { get; private set; }
 
         /// <summary>
         ///     Gets the curves.
