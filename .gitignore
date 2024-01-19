@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/3DProjection/OneLoneCoder_olcEngine3D_Part4.cpp
