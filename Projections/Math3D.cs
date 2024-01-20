@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using DataFormatter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Projections
@@ -6,8 +8,10 @@ namespace Projections
     public class UnitTest1
     {
         [TestMethod]
-        public void TestMethod1()
+        public void BasicCube()
         {
+            var cube = ResourceObjects.GetCube();
         }
+
     }
 }

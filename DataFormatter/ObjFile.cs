@@ -7,6 +7,8 @@
  * NOTE:        Blender Files don't start counting at 0! So add +1 offset.
  */
 
+// ReSharper disable MemberCanBeInternal
+
 using System.Collections.Generic;
 
 namespace DataFormatter
@@ -34,10 +36,11 @@ namespace DataFormatter
         public List<TertiaryFace> Face { get; init; }
 
         /// <summary>
-        ///     Gets the other.
+        ///     Gets the other Information.
+        ///     Not handled yet.
         /// </summary>
         /// <value>
-        ///     The other.
+        ///     The other Information.
         /// </value>
         public List<string> Other { get; init; }
     }
