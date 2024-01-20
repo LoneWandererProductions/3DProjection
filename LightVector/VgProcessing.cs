@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using DataFormatter;
 using ExtendedSystemObjects;
 using Mathematics;
 
@@ -340,6 +341,28 @@ namespace LightVector
             return curve;
         }
 
+        internal static List<Polygon> CreatePolygon(ObjFile objFile, Vector3D translation, int angleX, int angleY, int angleZ, int scale)
+        {
+            var obj = objFile.Vectors;
+
+            var tertiary = obj.Select(triangle => Convert(triangle, translation, angleX, angleY, angleZ, scale)).ToList();
+
+            //TODO do some stuff
+
+            return null;
+        }
+        private static Vector3D Convert(TertiaryVector triangle, Vector3D translateVector, int angleX, int angleY, int angleZ, int scale)
+        {
+            var start = new Vector3D { X = triangle.X, Y = triangle.Y, Z = triangle.Z };
+
+            var matrix = Projection3DCamera.WorldMatrix(translateVector, angleX, angleY, angleZ, scale);
+
+            var m = start.To3DMatrix();
+            var cache = matrix * m;
+
+            return Projection3D.GetVector(cache);
+        }
+
         /// <summary>
         ///     The generate line.
         /// </summary>
@@ -420,5 +443,6 @@ namespace LightVector
 
             return new Point { X = modulo, Y = yColumn };
         }
+
     }
 }

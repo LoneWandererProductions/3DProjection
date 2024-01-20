@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Shapes;
+using DataFormatter;
+using Mathematics;
 
 namespace LightVector
 {
@@ -31,6 +33,9 @@ namespace LightVector
             Width = width;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Vectors"/> class.
+        /// </summary>
         public Vectors()
         {
         }
@@ -159,6 +164,11 @@ namespace LightVector
             Curves.Add(crv);
 
             return path;
+        }
+
+        public List<Polygon> LoadObjectFile(ObjFile obj, Vector3D translation, int angleX, int angleY, int angleZ, int scale)
+        {
+            return VgProcessing.CreatePolygon(obj, translation, angleX, angleY, angleZ, scale);
         }
 
         /// <inheritdoc />

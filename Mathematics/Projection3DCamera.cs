@@ -62,43 +62,6 @@ namespace Mathematics
         }
 
         /// <summary>
-        ///     [ModelViewProjectionMatrix] = [View To Projection]x[World To View]x[Model to World]
-        ///     Creates a 3D world transformation
-        ///     https://github.com/MonoGame/MonoGame/blob/develop/MonoGame.Framework/Graphics/Viewport.cs
-        ///     https://github.com/MonoGame/MonoGame/blob/develop/MonoGame.Framework/Vector3.cs#L1043
-        /// </summary>
-        /// <param name="vector">The vector.</param>
-        /// <param name="angleX">The angle x.</param>
-        /// <param name="angleY">The angle y.</param>
-        /// <param name="angleZ">The angle z.</param>
-        /// <returns>
-        ///     World Transformation
-        /// </returns>
-        public static BaseMatrix WorldMatrix(Vector3D vector, int angleX, int angleY,
-            int angleZ)
-        {
-            // Set up "World Transform"
-            //var matRotZ = Projection3D.RotateZ(angle);
-            //var matRotX = Projection3D.RotateX(angle);
-            //var matTrans = Projection3D.Translate(0.0f, 0.0f, 5.0f);
-
-            //identity Matrix
-            var worldMatrix = MatrixUtility.MatrixIdentity(4);
-
-            // Form ModelViewProjectionMatrix
-            // Model to World, Transform by rotation
-            // Model to World, Transform by translation
-
-            worldMatrix = worldMatrix *
-                          Projection3DConstants.RotateX(angleX) *
-                          Projection3DConstants.RotateZ(angleY) *
-                          Projection3DConstants.RotateZ(angleZ) *
-                          vector.To3DMatrix();
-
-            return worldMatrix;
-        }
-
-        /// <summary>
         ///     Worlds the matrix.
         /// </summary>
         /// <param name="vector">The vector.</param>
@@ -110,16 +73,18 @@ namespace Mathematics
         /// <returns>
         ///     World Transformation
         /// </returns>
-        public static BaseMatrix WorldMatrix(Vector3D vector, Vector3D translation, int angleX, int angleY,
+        public static BaseMatrix WorldMatrix(Vector3D translation, int angleX, int angleY,
             int angleZ, int scale)
         {
-            // Set up "World Transform"
-            //var matRotZ = Projection3D.RotateZ(angle);
-            //var matRotX = Projection3D.RotateX(angle);
-            //var matTrans = Projection3D.Translate(0.0f, 0.0f, 5.0f);
-
             //identity Matrix
-            var worldMatrix = MatrixUtility.MatrixIdentity(4);
+            var identity = MatrixUtility.MatrixIdentity(4);
+
+            // Set up "World Transform"
+            var translationMatrix = translation == null ? identity : Projection3DConstants.Translate(translation);
+            var rotationXMatrix = angleX == 0 ? identity : Projection3DConstants.RotateX(angleX);
+            var rotationYMatrix = angleY == 0 ? identity : Projection3DConstants.RotateY(angleY);
+            var rotationZMatrix = angleZ == 0 ? identity : Projection3DConstants.RotateZ(angleZ);
+            var scaleMatrix = scale == 0 ? identity : Projection3DConstants.Scale(scale);
 
             // Form ModelViewProjectionMatrix
             // Model to World, Transform by rotation
@@ -129,15 +94,12 @@ namespace Mathematics
             //TODO check return Value, and Convert to 3d:
             //identity matrix
             //ModelViewProjection mvp = Projection * View * Model
-            worldMatrix = worldMatrix *
-                          Projection3DConstants.Translate(translation) *
-                          Projection3DConstants.RotateX(angleX) *
-                          Projection3DConstants.RotateZ(angleY) *
-                          Projection3DConstants.RotateZ(angleZ) *
-                          Projection3DConstants.Scale(scale) *
-                          vector.To3DMatrix();
-
-            return worldMatrix;
+            return identity *
+                   translationMatrix *
+                   rotationXMatrix *
+                   rotationYMatrix *
+                   rotationZMatrix *
+                   scaleMatrix;
         }
 
         /// <summary>
