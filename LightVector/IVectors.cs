@@ -114,6 +114,7 @@ namespace LightVector
         /// <param name="path">The path.</param>
         void SaveContainer(string path);
 
-        List<Polygon> LoadObjectFile(ObjFile obj, Vector3D translation, int angleX, int angleY, int angleZ, int scale);
+        Polygons LoadObjectFile(List<TertiaryVector> obj, Vector3D translation, int angleX, int angleY, int angleZ,
+            int scale);
     }
 }

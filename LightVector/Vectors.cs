@@ -166,7 +166,8 @@ namespace LightVector
             return path;
         }
 
-        public List<Polygon> LoadObjectFile(ObjFile obj, Vector3D translation, int angleX, int angleY, int angleZ, int scale)
+        public Polygons LoadObjectFile(List<TertiaryVector> obj, Vector3D translation, int angleX, int angleY,
+            int angleZ, int scale)
         {
             return VgProcessing.CreatePolygon(obj, translation, angleX, angleY, angleZ, scale);
         }

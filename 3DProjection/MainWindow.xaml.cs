@@ -10,8 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using LightVector;
+using Mathematics;
 
 namespace _3DProjection
 {
@@ -190,6 +192,40 @@ namespace _3DProjection
             var path = _vctr.CurveAdd(_points.Values.ToList());
 
             ImageTest.Children.Add(path);
+        }
+
+        private void BtnDrawCube_Click(object sender, RoutedEventArgs e)
+        {
+            var cube = ResourceObjects.GetCube();
+            var translateVector = new Vector3D { X = 50, Y = 50, Z = 0 };
+            var angleX = 45;
+            var angleY = 45;
+            var angleZ = 0;
+            var scale = 20;
+
+            var poly = _vctr.LoadObjectFile(cube, translateVector, angleX, angleY, angleZ, scale);
+
+            foreach (var py in GenerateTriangles(poly))
+            {
+                ImageTest.Children.Add(py);
+            }
+        }
+
+        private static List<Polygon> GenerateTriangles(Polygons poly)
+        {
+            var lst = new List<Polygon>();
+
+            for (int i = 0; i < poly.Points.Count; i = i + 3)
+            {
+                var p = new Polygon();
+                p.Points.Add(poly.Points[i]);
+                p.Points.Add(poly.Points[i + 1]);
+                p.Points.Add(poly.Points[i + 2]);
+
+                lst.Add(p);
+            }
+
+            return lst;
         }
     }
 }

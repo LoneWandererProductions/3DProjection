@@ -13,6 +13,7 @@
             <ColumnDefinition Width="75" />
             <ColumnDefinition Width="75" />
             <ColumnDefinition Width="75" />
+            <ColumnDefinition Width="75" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -39,5 +40,8 @@
         <Button Grid.Row="0" Grid.Column="4" Content="Draw Curves" HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 Click="BtnDrawCurves_Click" />
+        <Button Grid.Row="0" Grid.Column="5" Content="Draw Cube" HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Click="BtnDrawCube_Click" />
     </Grid>
 </Window>

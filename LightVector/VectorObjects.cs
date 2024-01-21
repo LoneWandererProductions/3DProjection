@@ -104,7 +104,7 @@ namespace LightVector
     ///     The curve object class.
     /// </summary>
     [Serializable]
-    public sealed class Polygon
+    public sealed class Polygons
     {
         /// <summary>
         ///     Gets or sets the points.
