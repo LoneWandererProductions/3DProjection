@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using DataFormatter;
 using LightVector;
 using Mathematics;
 
@@ -197,13 +198,17 @@ namespace _3DProjection
         private void BtnDrawCube_Click(object sender, RoutedEventArgs e)
         {
             var cube = ResourceObjects.GetCube();
+            var obj = new ObjFile
+            {
+                Vectors = cube
+            };
             var translateVector = new Vector3D { X = 50, Y = 50, Z = 0 };
             var angleX = 45;
             var angleY = 45;
             var angleZ = 0;
             var scale = 20;
 
-            var poly = _vctr.LoadObjectFile(cube, translateVector, angleX, angleY, angleZ, scale);
+            var poly = _vctr.LoadObjectFile(obj, translateVector, angleX, angleY, angleZ, scale);
 
             foreach (var py in GenerateTriangles(poly))
             {
@@ -215,9 +220,9 @@ namespace _3DProjection
         {
             var lst = new List<Polygon>();
 
-            for (int i = 0; i < poly.Points.Count; i = i + 3)
+            for (int i = 0; i < poly.Points.Count; i += 3)
             {
-                var p = new Polygon();
+                var p = new Polygon {Stroke = Brushes.Black, Fill = Brushes.LightBlue, StrokeThickness = 1};
                 p.Points.Add(poly.Points[i]);
                 p.Points.Add(poly.Points[i + 1]);
                 p.Points.Add(poly.Points[i + 2]);

@@ -341,11 +341,9 @@ namespace LightVector
             return curve;
         }
 
-        internal static Polygons CreatePolygon(List<TertiaryVector> objFile, Vector3D translation, int angleX, int angleY, int angleZ, int scale)
+        internal static Polygons CreatePolygon(ObjFile objFile, Vector3D translation, int angleX, int angleY, int angleZ, int scale)
         {
-            var obj = objFile;
-
-            var tertiary = obj.ConvertAll(triangle => Convert(triangle, translation, angleX, angleY, angleZ, scale));
+            var tertiary = objFile.Vectors.ConvertAll(triangle => Convert(triangle, translation, angleX, angleY, angleZ, scale));
 
             if (tertiary.IsNullOrEmpty()) return null;
 
