@@ -202,27 +202,29 @@ namespace _3DProjection
             {
                 Vectors = cube
             };
-            var translateVector = new Vector3D { X = 50, Y = 50, Z = 0 };
+            var translateVector = new Vector3D { X = 0, Y = 0, Z = 3 };
             var angleX = 45;
             var angleY = 45;
-            var angleZ = 0;
-            var scale = 20;
+            var angleZ = 45;
+            var scale =10;
 
             var poly = _vctr.LoadObjectFile(obj, translateVector, angleX, angleY, angleZ, scale);
 
             foreach (var py in GenerateTriangles(poly))
             {
-                ImageTest.Children.Add(py);
+                _ = ImageTest.Children.Add(py);
             }
         }
 
-        private static List<Polygon> GenerateTriangles(Polygons poly)
+        private static IEnumerable<Polygon> GenerateTriangles(Polygons poly)
         {
             var lst = new List<Polygon>();
 
             for (int i = 0; i < poly.Points.Count; i += 3)
             {
-                var p = new Polygon {Stroke = Brushes.Black, Fill = Brushes.LightBlue, StrokeThickness = 1};
+                var p = new Polygon {Stroke = Brushes.Black, Fill = Brushes.Navy, StrokeThickness = 1, HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
                 p.Points.Add(poly.Points[i]);
                 p.Points.Add(poly.Points[i + 1]);
                 p.Points.Add(poly.Points[i + 2]);

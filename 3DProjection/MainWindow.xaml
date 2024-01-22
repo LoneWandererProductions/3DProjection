@@ -21,10 +21,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Canvas x:Name="ImageTest"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
                 Grid.Row="1"
-                Grid.ColumnSpan="4"
+                Grid.ColumnSpan="7"
                 MouseDown="ImageTest_MouseDown"
                 Background="#FFF0EEEE" />
         <Button Grid.Row="0" Grid.Column="0" Content="Resize" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

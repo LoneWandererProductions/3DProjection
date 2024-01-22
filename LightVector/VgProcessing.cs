@@ -358,12 +358,7 @@ namespace LightVector
         {
             var start = new Vector3D { X = triangle.X, Y = triangle.Y, Z = triangle.Z };
 
-            var matrix = Projection3DCamera.WorldMatrix(translateVector, angleX, angleY, angleZ, scale);
-
-            var m = start.To3DMatrix();
-            var cache = matrix * m;
-
-            return Projection3D.GetVector(cache);
+            return Projection3DCamera.WorldMatrix(start, translateVector, angleX, angleY, angleZ, scale);
         }
 
         /// <summary>
@@ -446,6 +441,5 @@ namespace LightVector
 
             return new Point { X = modulo, Y = yColumn };
         }
-
     }
 }

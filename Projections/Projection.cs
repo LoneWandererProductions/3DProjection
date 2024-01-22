@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 using DataFormatter;
 using Mathematics;
@@ -11,32 +11,81 @@ namespace Projections
     public class Projection
     {
         [TestMethod]
+        public void Basic3D()
+        {
+            //1 Radian
+            var angleX =0;
+            var angleY = 0;
+            var angleZ = 0;
+
+            var vector = new Vector3D()
+            {
+                X = 0,
+                Y = 0,
+                Z = 0
+            };
+
+            var translate = new Vector3D { X = 0, Y = 0, Z = 3 };
+
+            var compare = CorrectData(vector, translate,angleX, angleY, angleZ, 1);
+            //0,0,3
+            //0,0,0.96676334250565255
+
+            var world = World(vector, 0, translate);
+
+            Assert.IsTrue(compare.Equals(world), "Not Equal");
+        }
+
+
+        [TestMethod]
         public void BasicCube()
         {
             var cube = ResourceObjects.GetCube();
-            var translateVector = new Vector3D { X = 50, Y = 50, Z = 0 };
-            var angleX = 45;
-            var angleY = 45;
-            var angleZ = 0;
-            var scale = 20;
-            var tertiary = cube.Select(triangle => Convert(triangle, translateVector, angleX, angleY, angleZ, scale)).ToList();
+            //1 Radian
+            var translateVector = new Vector3D { X = 1, Y = 1, Z = 1 };
+            var angleX = 57.296;
+            var angleY =0;
+            var angleZ = 57.296;
+            var scale = 1;
 
-            foreach (var triangle in tertiary)
+            var lstOld = cube.Select(tertiary => new Vector3D {X = tertiary.X, Y = tertiary.Y, Z = tertiary.Z}).Select(vector => CorrectData(vector, translateVector, angleX, angleY, angleZ, scale)).ToList();
+
+            var lstNew = cube.Select(tertiary => Convert(tertiary, translateVector, angleX, angleY, angleZ, scale)).ToList();
+
+            for (int i = 0; i < lstOld.Count; i++)
             {
-                Trace.WriteLine(triangle.ToText());
+                var compare = lstOld[i];
+                var world = lstNew[i];
+
+                Assert.IsTrue(compare.Equals(world), "Not Equal");
             }
         }
 
-        private static Vector3D Convert(TertiaryVector triangle, Vector3D translateVector, int angleX, int angleY, int angleZ, int scale)
+        private static Vector3D CorrectData(Vector3D vector, Vector3D translator, double angleX, double angleY, double angleZ, int scale)
+        {
+            var m = Projection3D.RotateZ(vector, angleZ);
+            vector = Projection3D.GetVector(m);
+            m = Projection3D.RotateY(vector, angleY);
+            vector = Projection3D.GetVector(m);
+            m = Projection3D.RotateX(vector, angleX);
+            vector = Projection3D.GetVector(m);
+            m = Projection3D.Translate(vector, translator);
+            vector = Projection3D.GetVector(m);
+            m = Projection3D.Scale(vector, scale);
+            vector = Projection3D.GetVector(m);
+            return Projection3DCamera.ProjectionTo3D(vector);
+        }
+
+        private static Vector3D World(Vector3D vector, double angle, Vector3D translator)
+        {
+            return Projection3DCamera.WorldMatrix(vector, translator, angle, 0, angle, 1);
+        }
+
+        private static Vector3D Convert(TertiaryVector triangle, Vector3D translateVector, double angleX, double angleY, double angleZ, int scale)
         {
             var start = new Vector3D {X = triangle.X, Y = triangle.Y, Z = triangle.Z};
 
-            var matrix = Projection3DCamera.WorldMatrix(translateVector, angleX, angleY, angleZ, scale);
-
-            var m = start.To3DMatrix();
-            var cache = matrix * m;
-
-            return Projection3D.GetVector(cache);
+            return Projection3DCamera.WorldMatrix(start, translateVector, angleX, angleY, angleZ, scale);
         }
     }
 }

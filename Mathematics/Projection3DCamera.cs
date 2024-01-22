@@ -64,7 +64,7 @@ namespace Mathematics
         /// <summary>
         ///     Worlds the matrix.
         /// </summary>
-        /// <param name="vector">The vector.</param>
+        /// <param name="vector">Vector to be transformed</param>
         /// <param name="translation">The translation.</param>
         /// <param name="angleX">The angle x.</param>
         /// <param name="angleY">The angle y.</param>
@@ -73,33 +73,24 @@ namespace Mathematics
         /// <returns>
         ///     World Transformation
         /// </returns>
-        public static BaseMatrix WorldMatrix(Vector3D translation, int angleX, int angleY,
-            int angleZ, int scale)
+        public static Vector3D WorldMatrix(Vector3D vector, Vector3D translation, double angleX, double angleY,
+            double angleZ, int scale)
         {
-            //identity Matrix
-            var identity = MatrixUtility.MatrixIdentity(4);
-
             // Set up "World Transform"
-            var translationMatrix = translation == null ? identity : Projection3DConstants.Translate(translation);
-            var rotationXMatrix = angleX == 0 ? identity : Projection3DConstants.RotateX(angleX);
-            var rotationYMatrix = angleY == 0 ? identity : Projection3DConstants.RotateY(angleY);
-            var rotationZMatrix = angleZ == 0 ? identity : Projection3DConstants.RotateZ(angleZ);
-            var scaleMatrix = scale == 0 ? identity : Projection3DConstants.Scale(scale);
+            //https://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/#cumulating-transformations
+            //ModelViewProjection mvp = Projection * View * Model
+
+            // Model to World, Transform by rotation
+            vector = Projection3D.GetVector(Projection3D.RotateZ(vector, angleZ));
+            vector = Projection3D.GetVector(Projection3D.RotateY(vector, angleY));
+            vector = Projection3D.GetVector(Projection3D.RotateX(vector, angleX));
+            // Model to World, Transform by translation
+            if (translation != null) vector = Projection3D.GetVector(Projection3D.Translate(vector, translation));
+            if (scale == 0) vector = Projection3D.GetVector(Projection3D.Scale(vector, scale));
 
             // Form ModelViewProjectionMatrix
-            // Model to World, Transform by rotation
-            // Model to World, Transform by translation
 
-            //https://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/#cumulating-transformations
-            //TODO check return Value, and Convert to 3d:
-            //identity matrix
-            //ModelViewProjection mvp = Projection * View * Model
-            return identity *
-                   translationMatrix *
-                   rotationXMatrix *
-                   rotationYMatrix *
-                   rotationZMatrix *
-                   scaleMatrix;
+            return ProjectionTo3D(vector);
         }
 
         /// <summary>
