@@ -8,6 +8,7 @@
  */
 
 // ReSharper disable MemberCanBeInternal
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 using System.Collections.Generic;
 
