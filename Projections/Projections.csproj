@@ -16,7 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DataFormatter\DataFormatter.csproj" />
     <ProjectReference Include="..\LightVector\LightVector.csproj" />
-    <ProjectReference Include="..\Mathematics\Mathematics.csproj" />
   </ItemGroup>
 
 </Project>

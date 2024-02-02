@@ -89,6 +89,18 @@ namespace Mathematics
         }
 
         /// <summary>
+        /// Scales the specified vector.
+        /// </summary>
+        /// <param name="vector">The vector.</param>
+        /// <returns>Scale Matrix.</returns>
+        public static BaseMatrix Scale(Vector3D vector)
+        {
+            double[,] scale = { { vector.X, 0, 0, 0 }, { 0, vector.Y, 0, 0 }, { 0, 0, vector.Z, 0 }, { 0, 0, 0, 1 } };
+
+            return new BaseMatrix { Matrix = scale };
+        }
+
+        /// <summary>
         ///     Scale Matrix.
         /// </summary>
         /// <param name="one">The x value.</param>
@@ -115,6 +127,32 @@ namespace Mathematics
             };
 
             return new BaseMatrix { Matrix = translate };
+        }
+
+        /// <summary>
+        /// Gets the model matrix.
+        /// </summary>
+        /// <param name="transform">The transform.</param>
+        /// <returns>The Model Matrix</returns>
+        public static BaseMatrix GetModelMatrix(Transform transform)
+        {
+            // Use LEFT-Handed rotation matrices (as seen in DirectX)
+            // https://docs.microsoft.com/en-us/windows/win32/direct3d9/transforms#rotate
+
+            BaseMatrix rotationX = RotateX(transform.Rotation.X);
+            BaseMatrix rotationY = RotateX(transform.Rotation.Y);
+            BaseMatrix rotationZ = RotateX(transform.Rotation.Z);
+
+            // XYZ rotation = (((Z × Y) × X) × Vector3) or (Z×Y×X)×V
+            var rotation = (rotationZ * rotationY);
+            rotation *= rotationX;
+
+            BaseMatrix translation = Translate(transform.Position);
+
+            BaseMatrix scaling = Scale(transform.Scale);
+
+            // Model Matrix = T × R × S (right to left order)
+            return ((scaling * rotation) * translation);
         }
     }
 }

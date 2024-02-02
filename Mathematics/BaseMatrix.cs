@@ -162,15 +162,6 @@ namespace Mathematics
         }
 
         /// <summary>
-        /// Matrixes the to3 d vector.
-        /// </summary>
-        /// <returns></returns>
-        public Vector3D MatrixTo3DVector()
-        {
-            return new Vector3D(Matrix[0, 0], Matrix[0, 1], Matrix[0, 2]);
-        }
-
-        /// <summary>
         ///     Determinants this instance.
         /// </summary>
         /// <returns>Calculate the Determinant</returns>
@@ -190,12 +181,26 @@ namespace Mathematics
         /// </returns>
         public static BaseMatrix operator *(BaseMatrix first, BaseMatrix second)
         {
-            if(first.Width != second.Height)
+            if (first.Width != second.Height)
             {
                 throw new ArithmeticException(MathResources.MatrixErrorColumns);
             }
 
             return MatrixUtility.UnsafeMultiplication(first, second);
+        }
+
+        /// <summary>
+        ///     Implements the operator *.
+        /// </summary>
+        /// <param name="v">The v.</param>
+        /// <param name="first">The first Matrix.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static Vector3D operator *(Vector3D v, BaseMatrix first)
+        {
+            var mat = (BaseMatrix)v;
+            return (Vector3D)(mat * first);
         }
 
         /// <summary>
@@ -242,6 +247,50 @@ namespace Mathematics
             }
 
             return MatrixUtility.UnsafeSubtraction(first, second);
+        }
+
+        /// <summary>
+        ///     Performs an explicit conversion from <see cref="BaseMatrix" /> to <see cref="Vector3D" />.
+        ///     Here is the only case where w will be set!
+        ///     Only usable for 3D stuff.
+        /// </summary>
+        /// <param name="first">The first.</param>
+        /// <returns>
+        ///     The result of the conversion.
+        /// </returns>
+        public static explicit operator Vector3D(BaseMatrix first)
+        {
+            if (first.Height != 4 && first.Width != 4)
+            {
+                return null;
+            }
+
+            var v = new Vector3D(first[0, 0], first[0, 1], first[0, 2]);
+            v.SetW(first[0, 3]);
+            return v;
+        }
+
+        /// <summary>
+        ///     Performs an implicit conversion from jagged array double to <see cref="BaseMatrix" />.
+        /// </summary>
+        /// <param name="m">The m.</param>
+        /// <returns>
+        ///     The result of the conversion.
+        /// </returns>
+        public static implicit operator BaseMatrix(double[,] m)
+        {
+            return new BaseMatrix { Matrix = m };
+        }
+
+        /// <summary>
+        ///     Converts to string.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return Matrix.ToString();
         }
     }
 }

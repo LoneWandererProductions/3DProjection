@@ -349,9 +349,8 @@ namespace LightVector
 
             var points = tertiary.Select(coordinate => new Point { X = coordinate.X, Y = coordinate.Y }).ToList();
 
-            if (points.IsNullOrEmpty()) return null;
 
-            return new Polygons {Points = points};
+            return points.IsNullOrEmpty() ? null : new Polygons {Points = points};
         }
 
         private static Vector3D Convert(TertiaryVector triangle, Vector3D translateVector, int angleX, int angleY, int angleZ, int scale)

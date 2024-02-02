@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LightVector\LightVector.csproj" />
+    <ProjectReference Include="..\Mathematics\Mathematics.csproj" />
   </ItemGroup>
 
 </Project>

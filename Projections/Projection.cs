@@ -64,15 +64,15 @@ namespace Projections
         private static Vector3D CorrectData(Vector3D vector, Vector3D translator, double angleX, double angleY, double angleZ, int scale)
         {
             var m = Projection3D.RotateZ(vector, angleZ);
-            vector = m.MatrixTo3DVector();
+            vector =(Vector3D) m;
             m = Projection3D.RotateY(vector, angleY);
-            vector = m.MatrixTo3DVector();
+            vector = (Vector3D)m;
             m = Projection3D.RotateX(vector, angleX);
-            vector = m.MatrixTo3DVector();
+            vector = (Vector3D)m;
             m = Projection3D.Translate(vector, translator);
-            vector = m.MatrixTo3DVector();
+            vector = (Vector3D)m;
             m = Projection3D.Scale(vector, scale);
-            vector = m.MatrixTo3DVector();
+            vector = (Vector3D)m;
             return Projection3DCamera.ProjectionTo3D(vector);
         }
 

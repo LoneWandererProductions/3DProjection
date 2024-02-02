@@ -62,6 +62,26 @@ namespace Mathematics
         }
 
         /// <summary>
+        /// Orthographic projection to3 d.
+        /// </summary>
+        /// <param name="start">The start.</param>
+        /// <returns>Transformed Coordinates</returns>
+        public static Vector3D OrthographicProjectionTo3D(Vector3D start)
+        {
+            double[,] matrix = { { start.X, start.Y, start.Z, 1 } };
+
+            var m1 = new BaseMatrix(matrix);
+            var projection = OrthographicProjectionTo3DMatrix();
+
+            var result = m1 * projection;
+            var x = result[0, 0];
+            var y = result[0, 1];
+            var z = result[0, 2];
+
+            return new Vector3D(x, y, z);
+        }
+
+        /// <summary>
         ///     Worlds the matrix.
         /// </summary>
         /// <param name="vector">Vector to be transformed</param>
@@ -81,17 +101,27 @@ namespace Mathematics
             //ModelViewProjection mvp = Projection * View * Model
 
             // Model to World, Transform by rotation
-            vector = Projection3D.RotateZ(vector, angleZ).MatrixTo3DVector();
-            vector = Projection3D.RotateY(vector, angleY).MatrixTo3DVector();
-            vector = Projection3D.RotateX(vector, angleX).MatrixTo3DVector();
+            vector = (Vector3D)Projection3D.RotateZ(vector, angleZ);
+            vector = (Vector3D)Projection3D.RotateY(vector, angleY);
+            vector = (Vector3D)Projection3D.RotateX(vector, angleX);
             // Model to World, Transform by translation
-            if (translation != null) vector = Projection3D.Translate(vector, translation).MatrixTo3DVector();
-            if (scale == 0) vector = Projection3D.Scale(vector, scale).MatrixTo3DVector();
+            if (translation != null)
+            {
+                vector = (Vector3D)Projection3D.Translate(vector, translation);
+            }
+
+            if (scale == 0)
+            {
+                vector = (Vector3D)Projection3D.Scale(vector, scale);
+            }
 
             // Form ModelViewProjectionMatrix
 
+            // XYZ rotation = (((Z × Y) × X) × Vector3) or (Z×Y×X)×V
+
             return ProjectionTo3D(vector);
         }
+
 
         /// <summary>
         ///     View matrix.
@@ -112,7 +142,7 @@ namespace Mathematics
             var mTarget = new BaseMatrix(1, 4) { [0, 0] = 0, [0, 1] = 0, [0, 2] = 1, [0, 3] = 1 };
 
             mTarget = cameraRotation * mTarget;
-            var lookDir =mTarget.MatrixTo3DVector();
+            var lookDir = (Vector3D)mTarget;
             var vTarget = camera + lookDir;
 
             var matCamera = PointAt(camera, vTarget, up);
@@ -135,7 +165,8 @@ namespace Mathematics
         public static BaseMatrix PointAt(Vector3D camera, Vector3D target, Vector3D up)
         {
             var newForward = target - camera;
-            var a = newForward.Multiply(up * newForward);
+            //TODO check
+            var a = newForward * (up * newForward);
             var newUp = up - a;
             var newRight = newUp.CrossProduct(newForward);
 
@@ -171,12 +202,29 @@ namespace Mathematics
         {
             double[,] translation =
             {
-                { Projection3DRegister.A * Projection3DRegister.F, 0, 0, 0 }, { 0, Projection3DRegister.F, 0, 0 },
+                { Projection3DRegister.A * Projection3DRegister.F, 0, 0, 0 }, 
+                { 0, Projection3DRegister.F, 0, 0 },
                 { 0, 0, Projection3DRegister.Q, 1 },
                 { 0, 0, -Projection3DRegister.ZNear * Projection3DRegister.Q, 0 }
             };
 
             //now lacks /w, has to be done at the end!
+            return new BaseMatrix(translation);
+        }
+
+        /// <summary>
+        /// Orthographic projection to3 d matrix.
+        /// </summary>
+        /// <returns>Projection Matrix</returns>
+        private static BaseMatrix OrthographicProjectionTo3DMatrix()
+        {
+            double[,] translation =
+            {
+                {Projection3DRegister.A, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 1}
+            };
             return new BaseMatrix(translation);
         }
 
