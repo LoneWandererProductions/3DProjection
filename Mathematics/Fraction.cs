@@ -17,7 +17,7 @@ namespace Mathematics
     /// <summary>
     ///     Basic fraction calculations
     /// </summary>
-    public static partial class Converter
+    public static partial class ExtendedMath
     {
         /// <inheritdoc />
         /// <summary>

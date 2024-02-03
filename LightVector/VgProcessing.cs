@@ -231,8 +231,8 @@ namespace LightVector
             var vector = GenerateLine(line, width);
 
             //We are "clever" we will use pre calculated values to reduce comma errors.
-            var cos = Converter.CalcCos(degree);
-            var sin = Converter.CalcSin(degree);
+            var cos = ExtendedMath.CalcCos(degree);
+            var sin = ExtendedMath.CalcSin(degree);
 
             var columnX = (int)((vector.ColumnX * cos) - (vector.RowY * sin));
             var rowY = (int)((vector.ColumnX * sin) + (vector.RowY * cos));
@@ -267,8 +267,8 @@ namespace LightVector
             }
 
             //We are "clever" we will use pre calculated values to reduce comma errors.
-            var cos = Converter.CalcCos(degree);
-            var sin = Converter.CalcSin(degree);
+            var cos = ExtendedMath.CalcCos(degree);
+            var sin = ExtendedMath.CalcSin(degree);
 
             for (var i = 0; i < curve.Points.Count; i++)
             {
@@ -341,19 +341,24 @@ namespace LightVector
             return curve;
         }
 
-        internal static Polygons CreatePolygon(ObjFile objFile, Vector3D translation, int angleX, int angleY, int angleZ, int scale)
+        internal static Polygons CreatePolygon(ObjFile objFile, Vector3D translation, int angleX, int angleY,
+            int angleZ, int scale)
         {
-            var tertiary = objFile.Vectors.ConvertAll(triangle => Convert(triangle, translation, angleX, angleY, angleZ, scale));
+            var poly = Triangle.CreateTri(objFile.Vectors);
+            var transform = new Transform();
+            var renderObj = new RenderObject(poly, transform);
+            var raster = new Rasterizer();
+            var render = raster.Render(renderObj, false);
 
-            if (tertiary.IsNullOrEmpty()) return null;
+            var lst = Triangle.GetCoordinates(render);
 
-            var points = tertiary.Select(coordinate => new Point { X = coordinate.X, Y = coordinate.Y }).ToList();
+            var points = lst.Select(item => item.ToPoint()).ToList();
 
-
-            return points.IsNullOrEmpty() ? null : new Polygons {Points = points};
+            return new Polygons {Points = points};
         }
 
-        private static Vector3D Convert(TertiaryVector triangle, Vector3D translateVector, int angleX, int angleY, int angleZ, int scale)
+        private static Vector3D Convert(TertiaryVector triangle, Vector3D translateVector, int angleX, int angleY,
+            int angleZ, int scale)
         {
             var start = new Vector3D { X = triangle.X, Y = triangle.Y, Z = triangle.Z };
 

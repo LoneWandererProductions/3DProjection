@@ -202,6 +202,7 @@ namespace _3DProjection
             {
                 Vectors = cube
             };
+
             var translateVector = new Vector3D { X = 0, Y = 0, Z = 3 };
             var angleX = 45;
             var angleY = 45;
