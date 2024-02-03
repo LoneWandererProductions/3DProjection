@@ -16,7 +16,7 @@ namespace Mathematics
     /// <summary>
     ///     Adds some further improvements to certain Math functions
     /// </summary>
-    public static partial class ExtendedMath
+    public static partial class Converter
     {
         /// <summary>
         ///     Calculate cos.

@@ -790,8 +790,8 @@ namespace Imaging
                 var point = corners[i];
                 corners[i] =
                     new PointF(
-                        (float)((point.X * ExtendedMath.CalcCos(degree)) - (point.Y * ExtendedMath.CalcSin(degree))),
-                        (float)((point.X * ExtendedMath.CalcSin(degree)) + (point.Y * ExtendedMath.CalcCos(degree))));
+                        (float)((point.X * Converter.CalcCos(degree)) - (point.Y * Converter.CalcSin(degree))),
+                        (float)((point.X * Converter.CalcSin(degree)) + (point.Y * Converter.CalcCos(degree))));
             }
 
             // Find the min and max x and y coordinates.

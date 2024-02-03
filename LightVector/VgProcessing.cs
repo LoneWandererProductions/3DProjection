@@ -231,8 +231,8 @@ namespace LightVector
             var vector = GenerateLine(line, width);
 
             //We are "clever" we will use pre calculated values to reduce comma errors.
-            var cos = ExtendedMath.CalcCos(degree);
-            var sin = ExtendedMath.CalcSin(degree);
+            var cos = Converter.CalcCos(degree);
+            var sin = Converter.CalcSin(degree);
 
             var columnX = (int)((vector.ColumnX * cos) - (vector.RowY * sin));
             var rowY = (int)((vector.ColumnX * sin) + (vector.RowY * cos));
@@ -267,8 +267,8 @@ namespace LightVector
             }
 
             //We are "clever" we will use pre calculated values to reduce comma errors.
-            var cos = ExtendedMath.CalcCos(degree);
-            var sin = ExtendedMath.CalcSin(degree);
+            var cos = Converter.CalcCos(degree);
+            var sin = Converter.CalcSin(degree);
 
             for (var i = 0; i < curve.Points.Count; i++)
             {
