@@ -341,8 +341,7 @@ namespace LightVector
             return curve;
         }
 
-        internal static Polygons CreatePolygon(ObjFile objFile, Vector3D translation, int angleX, int angleY,
-            int angleZ, int scale)
+        internal static Polygons CreatePolygon(ObjFile objFile)
         {
             var poly = Triangle.CreateTri(objFile.Vectors);
             var transform = new Transform();
