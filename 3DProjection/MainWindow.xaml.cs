@@ -6,6 +6,7 @@
  * PROGRAMER:   Peter Geinitz (Wayfarer)
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -62,7 +63,7 @@ namespace _3DProjection
             InitializeComponent();
             ImageTest.Width = TestWidth;
             ImageTest.Height = TestHeight;
-            _vctr = new Vectors();
+            _vctr = new Vectors(300, 300);
             _points = new Dictionary<int, Point>();
         }
 
@@ -211,29 +212,23 @@ namespace _3DProjection
 
             var poly = _vctr.LoadObjectFile(obj, translateVector, angleX, angleY, angleZ, scale);
 
-            foreach (var py in GenerateTriangles(poly))
+            var points = new PointCollection();
+            foreach (var point in poly.Points)
             {
-                _ = ImageTest.Children.Add(py);
+                points.Add(point);
             }
-        }
-
-        private static IEnumerable<Polygon> GenerateTriangles(Polygons poly)
-        {
-            var lst = new List<Polygon>();
-
-            for (int i = 0; i < poly.Points.Count; i += 3)
+            var myPolygon = new Polygon
             {
-                var p = new Polygon {Stroke = Brushes.Black, Fill = Brushes.Navy, StrokeThickness = 1, HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                p.Points.Add(poly.Points[i]);
-                p.Points.Add(poly.Points[i + 1]);
-                p.Points.Add(poly.Points[i + 2]);
+                Stroke = Brushes.Black,
+                Fill = Brushes.LightSeaGreen,
+                StrokeThickness = 2,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                Points = points
+            };
 
-                lst.Add(p);
-            }
-
-            return lst;
+            _ = ImageTest.Children.Add(myPolygon);
+            
         }
     }
 }
