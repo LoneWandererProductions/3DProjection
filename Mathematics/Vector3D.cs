@@ -85,9 +85,9 @@ namespace Mathematics
         ///     This has no relevance, whatsoever for the other calculations.
         /// </summary>
         /// <value>
-        ///     The w.
+        ///     The w  Value, which is 1 when initialized.
         /// </value>
-        public double W { get; private set; }
+        public double W { get; private set; } = 1;
 
         /// <summary>
         ///     Gets the zero Vector.
@@ -215,7 +215,7 @@ namespace Mathematics
         /// </returns>
         public override string ToString()
         {
-            return string.Concat("X: ", X, " Y: ", Y, " Z: ", Z);
+            return string.Concat(MathResources.StrX, X, MathResources.StrY, Y, MathResources.StrZ, Z);
         }
 
         /// <summary>
@@ -365,12 +365,8 @@ namespace Mathematics
         /// <returns>Vector transformed to Matrix</returns>
         public static explicit operator BaseMatrix(Vector3D first)
         {
-            var matrix = new double[1, 4];
-            matrix[0, 0] = first.X;
-            matrix[0, 1] = first.Y;
-            matrix[0, 2] = first.Z;
-            //special case only for 3D Stuff
-            matrix[0, 3] = first.W;
+            var matrix = new[,] { { first.X, first.Y, first.Z, first.W } };
+
             return new BaseMatrix(matrix);
         }
 

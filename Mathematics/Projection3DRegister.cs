@@ -50,7 +50,7 @@ namespace Mathematics
         /// <value>
         ///     The height.
         /// </value>
-        public static int Height { get; set; } = 300; //480;
+        public static int Height { get; set; } = 480;
 
         /// <summary>
         ///     Gets or sets the width of the display area.
@@ -58,7 +58,7 @@ namespace Mathematics
         /// <value>
         ///     The width.
         /// </value>
-        public static int Width { get; set; } = 300; //640;
+        public static int Width { get; set; } = 640;
 
         /// <summary>
         ///     Gets the calculated Aspect Ration

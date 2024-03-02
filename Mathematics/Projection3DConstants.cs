@@ -6,18 +6,74 @@
  * PROGRAMER:   Peter Geinitz (Wayfarer)
  * SOURCES:     https://learn.microsoft.com/en-us/windows/win32/direct3d9/transforms
  *              https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
+ *              https://github.com/OneLoneCoder/Javidx9/blob/master/ConsoleGameEngine/BiggerProjects/Engine3D/OneLoneCoder_olcEngine3D_Part3.cpp
  */
 
 using System;
 
 namespace Mathematics
 {
+    /// <summary>
+    ///     Some Matrices that can be used outside of 3D Projection
+    /// </summary>
     internal static class Projection3DConstants
     {
         /// <summary>
         ///     Convert Degree to radial
         /// </summary>
-        private const double Rad = Math.PI / 180.0;
+        internal const double Rad = Math.PI / 180.0d;
+
+
+        /// <summary>
+        ///     Projections the to 3d matrix.
+        /// </summary>
+        /// <returns>Projection Matrix</returns>
+        internal static BaseMatrix ProjectionTo3DMatrix()
+        {
+            double[,] translation =
+            {
+                { Projection3DRegister.A * Projection3DRegister.F, 0, 0, 0 }, { 0, Projection3DRegister.F, 0, 0 },
+                { 0, 0, Projection3DRegister.Q, 1 },
+                { 0, 0, -Projection3DRegister.ZNear * Projection3DRegister.Q, 0 }
+            };
+
+            //now lacks /w, has to be done at the end!
+            return new BaseMatrix(translation);
+        }
+
+        /// <summary>
+        ///     Converts Coordinates based on the Camera.
+        ///     https://ksimek.github.io/2012/08/22/extrinsic/
+        ///     https://www.youtube.com/watch?v=HXSuNxpCzdM
+        ///     https://stackoverflow.com/questions/74233166/custom-lookat-and-whats-the-math-behind-it
+        ///     https://medium.com/@carmencincotti/lets-look-at-magic-lookat-matrices-c77e53ebdf78
+        /// </summary>
+        /// <param name="target">Target Vector.</param>
+        /// <param name="transform">The transform.</param>
+        /// <returns>
+        ///     matrix for Transforming the Coordinate
+        /// </returns>
+        internal static BaseMatrix LookAt(Transform transform, Vector3D target)
+        {
+            var forward = (target - transform.Position).Normalize(); // Z axis
+
+            var right = transform.Up.CrossProduct(forward).Normalize(); // X axis
+
+            var up = forward.CrossProduct(right); // Y axis
+
+            // The inverse camera's translation
+            var transl = new Vector3D(-(right * transform.Position),
+                -(up * transform.Position),
+                -(forward * transform.Position));
+
+            double[,] viewMatrix =
+            {
+                { right.X, up.X, forward.X, 0 }, { right.Y, up.Y, forward.Y, 0 }, { right.Z, up.Z, forward.Z, 0 },
+                { transl.X, transl.Y, transl.Z, 1 }
+            };
+
+            return new BaseMatrix { Matrix = viewMatrix };
+        }
 
         /// <summary>
         ///     Rotates x.
@@ -89,7 +145,7 @@ namespace Mathematics
         }
 
         /// <summary>
-        /// Scales the specified vector.
+        ///     Scales the specified vector.
         /// </summary>
         /// <param name="vector">The vector.</param>
         /// <returns>Scale Matrix.</returns>
@@ -127,32 +183,6 @@ namespace Mathematics
             };
 
             return new BaseMatrix { Matrix = translate };
-        }
-
-        /// <summary>
-        /// Gets the model matrix.
-        /// </summary>
-        /// <param name="transform">The transform.</param>
-        /// <returns>The Model Matrix</returns>
-        public static BaseMatrix GetModelMatrix(Transform transform)
-        {
-            // Use LEFT-Handed rotation matrices (as seen in DirectX)
-            // https://docs.microsoft.com/en-us/windows/win32/direct3d9/transforms#rotate
-
-            BaseMatrix rotationX = RotateX(transform.Rotation.X);
-            BaseMatrix rotationY = RotateX(transform.Rotation.Y);
-            BaseMatrix rotationZ = RotateX(transform.Rotation.Z);
-
-            // XYZ rotation = (((Z × Y) × X) × Vector3) or (Z×Y×X)×V
-            var rotation = (rotationZ * rotationY);
-            rotation *= rotationX;
-
-            BaseMatrix translation = Translate(transform.Position);
-
-            BaseMatrix scaling = Scale(transform.Scale);
-
-            // Model Matrix = T × R × S (right to left order)
-            return ((scaling * rotation) * translation);
         }
     }
 }

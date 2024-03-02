@@ -12,6 +12,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using ExtendedSystemObjects;
 
 namespace Mathematics
 {
@@ -73,18 +74,18 @@ namespace Mathematics
         public double[,] Matrix { get; set; }
 
         /// <summary>
-        ///     Gets the height.
+        ///     Gets the height. Y
         /// </summary>
         /// <value>
-        ///     The height.
+        ///     The height. Y
         /// </value>
         public int Height => Matrix.GetLength(0);
 
         /// <summary>
-        ///     Gets the width.
+        ///     Gets the width. X
         /// </summary>
         /// <value>
-        ///     The width.
+        ///     The width. X
         /// </value>
         public int Width => Matrix.GetLength(1);
 
@@ -157,7 +158,12 @@ namespace Mathematics
         /// <returns>The Inverse Matrix</returns>
         public BaseMatrix Inverse()
         {
-            var result = MatrixUtility.MatrixInverse(Matrix);
+            if (Height != Width)
+            {
+                throw new NotImplementedException(MathResources.MatrixErrorInverseNotCubic);
+            }
+
+            var result = MatrixInverse.Inverse(Matrix);
             return new BaseMatrix(result);
         }
 
@@ -167,7 +173,7 @@ namespace Mathematics
         /// <returns>Calculate the Determinant</returns>
         public double Determinant()
         {
-            return MatrixUtility.MatrixDeterminant(Matrix);
+            return MatrixInverse.MatrixDeterminant(Matrix);
         }
 
         /// <summary>
@@ -202,6 +208,21 @@ namespace Mathematics
             var mat = (BaseMatrix)v;
             return (Vector3D)(mat * first);
         }
+
+        /// <summary>
+        ///     Implements the operator *.
+        /// </summary>
+        /// <param name="first">The first Matrix.</param>
+        /// <param name="v">The v.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static Vector3D operator *(BaseMatrix first, Vector3D v)
+        {
+            var mat = (BaseMatrix)v;
+            return (Vector3D)(first * mat);
+        }
+
 
         /// <summary>
         ///     Implements the operator +.
@@ -250,6 +271,66 @@ namespace Mathematics
         }
 
         /// <summary>
+        ///     Equals the specified other.
+        ///     Does not use the jagged array Equal, because sadly, that doesn't play well enough with double values.
+        /// </summary>
+        /// <param name="other">The other.</param>
+        /// <returns>Equal or not</returns>
+        public bool Equals(BaseMatrix other)
+        {
+            return MatrixUtility.UnsafeCompare(this, other);
+        }
+
+        /// <summary>
+        ///     Determines whether the specified <see cref="object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+        /// <returns>
+        ///     <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            return obj is BaseMatrix other && Equals(other);
+        }
+
+        /// <summary>
+        ///     Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Matrix);
+        }
+
+        /// <summary>
+        ///     Implements the operator ==.
+        /// </summary>
+        /// <param name="first">The first.</param>
+        /// <param name="second">The second.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static bool operator ==(BaseMatrix first, BaseMatrix second)
+        {
+            return first?.Equals(second) == true;
+        }
+
+        /// <summary>
+        ///     Implements the operator !=.
+        /// </summary>
+        /// <param name="first">The first.</param>
+        /// <param name="second">The second.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
+        public static bool operator !=(BaseMatrix first, BaseMatrix second)
+        {
+            return !(first == second);
+        }
+
+        /// <summary>
         ///     Performs an explicit conversion from <see cref="BaseMatrix" /> to <see cref="Vector3D" />.
         ///     Here is the only case where w will be set!
         ///     Only usable for 3D stuff.
@@ -290,7 +371,7 @@ namespace Mathematics
         /// </returns>
         public override string ToString()
         {
-            return Matrix.ToString();
+            return Matrix.ToText();
         }
     }
 }

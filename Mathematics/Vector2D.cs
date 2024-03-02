@@ -124,7 +124,7 @@ namespace Mathematics
         /// </returns>
         public override string ToString()
         {
-            return string.Concat("X: ", X, " Y: ", Y);
+            return string.Concat(MathResources.StrX, X, MathResources.StrY, Y);
         }
 
         /// <summary>
@@ -268,6 +268,18 @@ namespace Mathematics
         public static explicit operator Coordinate2D(Vector2D first)
         {
             return new Coordinate2D(first.RoundedX, first.RoundedY);
+        }
+
+        /// <summary>
+        ///     Performs an explicit conversion from <see cref="Vector3D" /> to <see cref="Vector2D" />.
+        /// </summary>
+        /// <param name="first">The first.</param>
+        /// <returns>
+        ///     The result of the conversion.
+        /// </returns>
+        public static explicit operator Vector2D(Vector3D first)
+        {
+            return new Vector2D(first.X, first.Y);
         }
 
         /// <summary>
