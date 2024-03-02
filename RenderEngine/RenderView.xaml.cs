@@ -62,7 +62,7 @@ namespace RenderEngine
                 }
         }
 
-        private void DrawShape<T>(T shape, GraphicStyle style, bool clear) where T : IDrawable
+        public void DrawShape<T>(T shape, GraphicStyle style, bool clear) where T : IDrawable
         {
             using var paint = new SKPaint();
             using var canvas = new SKCanvas(_bitmap);
