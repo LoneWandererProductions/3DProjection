@@ -20,7 +20,7 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Canvas x:Name="ImageTest"
+        <Canvas x:Name="ImageTest" Height="300" Width ="300"
                 Grid.Row="1"
                 Grid.ColumnSpan="7"
                 MouseDown="ImageTest_MouseDown"
