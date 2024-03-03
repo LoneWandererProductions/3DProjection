@@ -1,9 +1,27 @@
-﻿using Mathematics;
+﻿/*
+ * COPYRIGHT:   See COPYING in the top level directory
+ * PROJECT:     RenderEngine
+ * FILE:        RenderEngine/CubicBezierCurves.cs
+ * PURPOSE:     Curve objects to form a long curvy line
+ * PROGRAMER:   Peter Geinitz (Wayfarer)
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Mathematics;
 using SkiaSharp;
 
 namespace RenderEngine
 {
-    public class CubicBezierCurve : Geometry, IDrawable
+    /// <inheritdoc cref="Geometry" />
+    /// <summary>
+    ///     Draw a Bezier Curve
+    /// </summary>
+    /// <seealso cref="Geometry" />
+    /// <seealso cref="IDrawable" />
+    public sealed class CubicBezierCurve : Geometry, IDrawable
     {
         /// <summary>
         ///     Gets or sets the first control point.
@@ -11,34 +29,44 @@ namespace RenderEngine
         /// <value>
         ///     The first.
         /// </value>
-        public Coordinate2D First { get; set; }
+        public List<Coordinate2D> Path { get; set; } = new();
 
+        /// <inheritdoc />
         /// <summary>
-        ///     Gets or sets the second control point.
+        ///     Draws the specified canvas.
         /// </summary>
-        /// <value>
-        ///     The first.
-        /// </value>
-        public Coordinate2D Second { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the third control point or Ending point.
-        /// </summary>
-        /// <value>
-        ///     The first.
-        /// </value>
-        public Coordinate2D Third { get; set; }
-
-        public int StrokeWidth { get; set; } = 3;
-
-        public void Draw(SKCanvas canvas, SKPaint paint, GraphicStyle style)
+        /// <param name="canvas">The canvas.</param>
+        /// <param name="paint">The paint.</param>
+        /// <param name="style">The style.</param>
+        /// <returns>
+        ///     Success Status.
+        /// </returns>
+        public bool Draw(SKCanvas canvas, SKPaint paint, GraphicStyle style)
         {
-            using var path = new SKPath();
+            //check if it division is possible
+            if ((Path.Count) % 3 != 0) return false;
+
+            using var path = RenderHelper.CreatePath(Start, Path);
+
             // Move to the starting point
             path.MoveTo(Start.X, Start.Y);
 
-            // Draw a cubic Bezier curve
-            path.CubicTo(First.X, First.Y, Second.X, Second.Y, Third.X, Third.Y);
+            // Draw a cubic Bezier curve, define Start Point
+            path.MoveTo(Start.X, Start.Y);
+
+            for (int i = 0; i < Path.Count; i += 3)
+            {
+                // Draw a cubic Bezier curve
+                if (i + 2 < Path.Count)
+                {
+                    path.CubicTo(path[i], path[i + 1], path[i + 2]);
+                }
+                // Draw a quadratic Bezier curve (if there are only three control points left)
+                else if (i + 1 < Path.Count)
+                {
+                    path.QuadTo(path[i], path[i + 1]);
+                }
+            }
 
             switch (style)
             {
@@ -49,20 +77,49 @@ namespace RenderEngine
                     break;
                 case GraphicStyle.Fill:
                 {
-                    using var fillPaint = new SKPaint {Style = SKPaintStyle.Fill};
+                    using var fillPaint = new SKPaint { Style = SKPaintStyle.Fill };
                     canvas.DrawPath(path, fillPaint);
-                    return; // No need to draw the stroke in the Fill style
+                    return true; // No need to draw the stroke in the Fill style
                 }
                 case GraphicStyle.Plot:
                     paint.StrokeWidth = StrokeWidth;
-                    canvas.DrawPoint(First.X, First.Y, paint);
-                    canvas.DrawPoint(Second.X, Second.Y, paint);
-                    canvas.DrawPoint(Third.X, Third.Y, paint);
+                    foreach (var plot in Path)
+                    {
+                        RenderHelper.DrawPoint(canvas, plot, paint);
+                    }
+
                     break;
             }
 
+            if (RenderRegister.Debug)
+            {
+                Trace.WriteLine(ToString());
+            }
+
+
             // Draw the path
             canvas.DrawPath(path, paint);
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Converts to string.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var str = string.Concat(Start.ToString(), Environment.NewLine);
+            var last = Path.Last();
+            Path.Remove(last);
+
+            str = Path.Aggregate(str, (current, plot) => string.Concat(current, plot.ToString(), Environment.NewLine));
+
+            str = string.Concat(str, last.ToString());
+
+            return str;
         }
     }
 }

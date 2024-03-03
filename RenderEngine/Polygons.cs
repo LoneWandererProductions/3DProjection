@@ -1,5 +1,17 @@
-﻿using System;
+﻿/*
+ * COPYRIGHT:   See COPYING in the top level directory
+ * PROJECT:     RenderEngine
+ * FILE:        RenderEngine/Polygons.cs
+ * PURPOSE:     Polygons object
+ * PROGRAMER:   Peter Geinitz (Wayfarer)
+ */
+
+// ReSharper disable ClassNeverInstantiated.Global
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Mathematics;
 using SkiaSharp;
 
@@ -13,44 +25,79 @@ namespace RenderEngine
     /// <seealso cref="IDrawable" />
     public sealed class Polygons : Geometry, IDrawable
     {
+        /// <summary>
+        /// Gets or sets the path.
+        /// </summary>
+        /// <value>
+        /// The path.
+        /// </value>
         public List<Coordinate2D> Path { get; set; } = new();
 
-        public void Draw(SKCanvas canvas, SKPaint paint, GraphicStyle style)
+        /// <inheritdoc />
+        /// <summary>
+        ///     Draws the specified canvas.
+        /// </summary>
+        /// <param name="canvas">The canvas.</param>
+        /// <param name="paint">The paint.</param>
+        /// <param name="style">The style.</param>
+        /// <exception cref="ArgumentOutOfRangeException">style - null</exception>
+        /// <returns>
+        ///    Success status of the drawing
+        /// </returns>
+        public bool Draw(SKCanvas canvas, SKPaint paint, GraphicStyle style)
         {
-            using var path = CreatePath();
+            using var path = RenderHelper.CreatePath(Start, Path);
 
             // Fill or stroke the polygon
             switch (style)
             {
                 case GraphicStyle.Mesh:
+                    paint.StrokeWidth = StrokeWidth;
                     canvas.DrawPath(path, paint);
                     break;
                 case GraphicStyle.Fill:
                 {
-                    using var fillPaint = new SKPaint {Style = SKPaintStyle.Fill};
+                    using var fillPaint = new SKPaint { Style = SKPaintStyle.Fill };
                     canvas.DrawPath(path, fillPaint);
+                    return true; // No need to draw the stroke in the Fill style
                 }
                     break;
                 case GraphicStyle.Plot:
-                    foreach (var plot in Path) canvas.DrawPoint(plot.X, plot.Y, paint);
+                    foreach (var plot in Path)
+                    {
+                        RenderHelper.DrawPoint(canvas, plot, paint);
+                    }
 
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(style), style, null);
             }
+
+            if (RenderRegister.Debug)
+            {
+                Trace.WriteLine(ToString());
+            }
+
+            return true;
         }
 
-        private SKPath CreatePath()
+        /// <summary>
+        ///     Converts to string.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
         {
-            var path = new SKPath();
+            var str = string.Concat(Start.ToString(), Environment.NewLine);
+            var last = Path.Last();
+            _ = Path.Remove(last);
 
-            path.MoveTo(Start.X, Start.Y); // Move to the starting point
+            str = Path.Aggregate(str, (current, plot) => string.Concat(current, plot.ToString(), Environment.NewLine));
 
-            foreach (var line in Path) path.LineTo(line.X, line.Y); // Line to the points
+            str = string.Concat(str, last.ToString());
 
-            path.Close(); // Close the path to complete the polygon
-
-            return path;
+            return str;
         }
     }
 }
